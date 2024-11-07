@@ -44,7 +44,7 @@ class RedactingFormatter(logging.Formatter):
         return super().format(record)
 
 
-def get_logger(self) -> logging.Logger:
+def get_logger() -> logging.Logger:
     '''returns a suitable logger'''
     logger = logging.getLogger(name="user_data")
     logger.propagate = False
@@ -68,3 +68,19 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
         database=db_name
     )
     return cnx
+
+
+def main() -> None:
+    '''main function'''
+    cnx = get_db()
+    logger = get_logger()
+    cursor = cnx.cursor()
+    cursor.execute('SELECT * FROM users;')
+    fields = [desc[0] for desc in cursor.description]
+    for row in cursor:
+        log_row = '; '.join(f'{f}={val}' for f, val in zip(fields, row))
+        logger.info(log_row.strip())
+
+
+if __name__ == '__main__':
+    main()
