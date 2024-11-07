@@ -5,8 +5,11 @@ Filtered logger
 
 '''
 import logging
+import os
 import re
-from typing import List, Tuple
+from typing import List
+
+import mysql.connector as connector
 
 PII_FIELDS = ('name', 'email', 'ssn', 'phone', 'password')
 
@@ -50,3 +53,18 @@ def get_logger(self) -> logging.Logger:
     handler.setFormatter(RedactingFormatter(list(PII_FIELDS)))
     logger.addHandler(handler)
     return logger
+
+
+def get_db() -> connector.connection.MySQLConnection:
+    '''returns an SQL connection'''
+    username = os.environ['PERSONAL_DATA_DB_USERNAME'] or 'root'
+    pwd = os.environ.get('PERSONAL_DATA_DB_PASSWORD') or ''
+    host = os.environ.get('PERSONAL_DATA_DB_HOST') or 'localhost'
+    db_name = os.environ.get('PERSONAL_DATA_DB_NAME')
+    cnx = connector.connect(
+        host=host,
+        user=username,
+        password=pwd,
+        database=db_name
+    )
+    return cnx
