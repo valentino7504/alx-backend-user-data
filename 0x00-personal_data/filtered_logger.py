@@ -40,6 +40,7 @@ class RedactingFormatter(logging.Formatter):
         record.msg = msg
         return super().format(record)
 
+
 def get_logger(self) -> logging.Logger:
     '''returns a suitable logger'''
     logger = logging.Logger(name="user_data", propagate=False)
