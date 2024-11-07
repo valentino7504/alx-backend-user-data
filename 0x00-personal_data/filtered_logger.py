@@ -6,7 +6,9 @@ Filtered logger
 '''
 import logging
 import re
-from typing import List
+from typing import List, Tuple
+
+PII_FIELDS = ('name', 'email', 'ssn', 'phone', 'password')
 
 
 def filter_datum(
@@ -28,7 +30,7 @@ class RedactingFormatter(logging.Formatter):
     SEPARATOR = ";"
 
     def __init__(self, fields: List[str]):
-        super(RedactingFormatter, self).__init__(self.FORMAT)
+        super().__init__(self.FORMAT)
         self.__fields = fields
 
     def format(self, record: logging.LogRecord) -> str:
@@ -37,3 +39,12 @@ class RedactingFormatter(logging.Formatter):
         msg = filter_datum(self.__fields, self.REDACTION, record.msg, sep)
         record.msg = msg
         return super().format(record)
+
+    def get_logger(self) -> logging.Logger:
+        '''returns a suitable logger'''
+        logger = logging.Logger(name="user_data", propagate=False)
+        logger.setLevel(logging.INFO)
+        handler = logging.StreamHandler()
+        handler.setFormatter(RedactingFormatter(PII_FIELDS))
+        logger.addHandler(handler)
+        return logger
