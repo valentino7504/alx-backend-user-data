@@ -53,7 +53,7 @@ def unauthorised(e):
 @app.errorhandler(403)
 def forbidden(e):
     '''forbidden error handler'''
-    return jsonify({'error': 'Forbidden'})
+    return jsonify({'error': 'Forbidden'}), 403
 
 
 if __name__ == '__main__':
