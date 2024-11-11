@@ -68,13 +68,14 @@ class BasicAuth(Auth):
             user_pwd: str
             ) -> TypeVar('User'):
         '''show user object from the credentials'''
-        if user_email is None:
+        if user_email is None or not isinstance(user_email, str):
             return None
-        if user_pwd is None:
+        if user_pwd is None or not isinstance(user_pwd, str):
             return None
         users = User.search(attributes={'email': user_email})
         if not users:
             return None
-        if not users[0].is_valid_password(user_pwd):
-            return None
-        return users[0]
+        for user in users:
+            if user.is_valid_password(user_pwd):
+                return user
+        return None
