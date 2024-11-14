@@ -4,6 +4,7 @@
 This is the auth file
 
 '''
+import os
 from typing import Any, List, TypeVar
 
 from flask import request
@@ -11,6 +12,7 @@ from flask import request
 
 class Auth():
     '''authentication class'''
+
     def __init__(self) -> None:
         '''init method'''
         pass
@@ -41,3 +43,11 @@ class Auth():
     def current_user(self, request=None) -> TypeVar('User'):
         '''current user'''
         return None
+
+    def session_cookie(self, request=None):
+        '''returns a session cookie'''
+        if request is None:
+            return None
+        cookie_name = os.getenv('SESSION_NAME')
+        cookie = request.cookies.get(cookie_name)
+        return cookie
