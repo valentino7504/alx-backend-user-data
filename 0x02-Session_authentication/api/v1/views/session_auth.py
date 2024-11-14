@@ -6,7 +6,7 @@ files for session auth views
 '''
 from os import getenv
 
-from flask import jsonify, request
+from flask import abort, jsonify, request
 
 from api.v1.views import app_views
 from models.user import User
@@ -33,3 +33,14 @@ def login() -> str:
     response = jsonify(user.to_json())
     response.set_cookie(cookie_name, session)
     return response
+
+
+@app_views.route('/auth_session/logout', methods=['DELETE'],
+                 strict_slashes=False)
+def logout() -> str:
+    '''login method for handling auth'''
+    from api.v1.app import auth
+    destroyed = auth.destroy_session(request)
+    if not destroyed:
+        return abort(404)
+    return jsonify({}), 200
