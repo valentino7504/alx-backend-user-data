@@ -14,7 +14,7 @@ from db import DB
 from user import User
 
 
-def _hash_password(password: str) -> str:
+def _hash_password(password: str) -> bytes:
     '''hashes password'''
     return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
@@ -30,12 +30,12 @@ class Auth:
     def register_user(self, email: str, password: str) -> Union[None, User]:
         '''registers a user'''
         try:
-            self._db.find_user_by(email=email)
+            user = self._db.find_user_by(email=email)
+            if user:
+                raise ValueError('User {} already exists'.format(email))
         except (NoResultFound, InvalidRequestError):
             hashed = _hash_password(password)
             return self._db.add_user(email, hashed.decode('utf-8'))
-        else:
-            raise ValueError('User {} already exists'.format(email))
 
     def valid_login(self, email: str, password: str) -> bool:
         '''validates a login'''
