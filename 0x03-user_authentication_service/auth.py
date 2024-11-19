@@ -7,6 +7,7 @@ authentication module
 import uuid
 
 import bcrypt
+from sqlalchemy.exc import InvalidRequestError
 from sqlalchemy.orm.exc import NoResultFound
 
 from db import DB
@@ -49,7 +50,7 @@ class Auth:
         new_session = str(uuid.uuid4())
         try:
             user = self._db.find_user_by(email=email)
-        except NoResultFound:
+        except (NoResultFound, InvalidRequestError):
             return None
         self._db.update_user(user.id, session_id=new_session)
         return new_session
