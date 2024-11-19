@@ -7,6 +7,7 @@ authentication module
 from typing import Union
 
 import bcrypt
+from sqlalchemy.exc import InvalidRequestError
 from sqlalchemy.orm.exc import NoResultFound
 
 from db import DB
@@ -30,7 +31,15 @@ class Auth:
         '''registers a user'''
         try:
             self._db.find_user_by(email=email)
-        except NoResultFound:
+        except (NoResultFound, InvalidRequestError):
             return self._db.add_user(email, _hash_password(password))
         else:
             raise ValueError('User {} already exists'.format(email))
+
+    def valid_login(self, email: str, password: str) -> bool:
+        '''validates a login'''
+        try:
+            user = self._db.find_user_by(email=email)
+        except NoResultFound:
+            return False
+        return bcrypt.checkpw(password, user.hashed_password)
