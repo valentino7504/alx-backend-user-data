@@ -44,9 +44,6 @@ class DB:
         '''finds user using keywords'''
         if not kwargs:
             raise InvalidRequestError
-        for key in kwargs:
-            if not hasattr(User, key):
-                raise InvalidRequestError
         result = self._session.query(User).filter_by(**kwargs).first()
         if not result:
             raise NoResultFound
