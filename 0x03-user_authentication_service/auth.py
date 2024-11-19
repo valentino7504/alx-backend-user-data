@@ -4,6 +4,8 @@
 authentication module
 
 '''
+import uuid
+
 import bcrypt
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -41,3 +43,13 @@ class Auth:
         except NoResultFound:
             return False
         return bcrypt.checkpw(password.encode('utf-8'), user.hashed_password)
+
+    def create_session(self, email: str) -> str:
+        '''creates a session'''
+        new_session = str(uuid.uuid4())
+        try:
+            user = self._db.find_user_by(email=email)
+        except NoResultFound:
+            return None
+        self._db.update_user(user.id, session_id=new_session)
+        return new_session
