@@ -42,11 +42,12 @@ class DB:
 
     def find_user_by(self, **kwargs):
         '''finds user using keywords'''
+        if not kwargs:
+            raise InvalidRequestError
         for key in kwargs:
-            if key not in vars(User):
+            if not hasattr(User, key):
                 raise InvalidRequestError
-        stmt = select(User).filter_by(**kwargs).limit(1)
-        result = self._session.execute(stmt).scalar_one_or_none()
-        if result is None:
+        result = self._session.query(User).filter_by(**kwargs).first()
+        if not result:
             raise NoResultFound
         return result
