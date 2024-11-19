@@ -39,7 +39,7 @@ class DB:
         session.commit()
         return new_user
 
-    def find_user_by(self, **kwargs):
+    def find_user_by(self, **kwargs) -> User:
         '''finds user using keywords'''
         if not kwargs:
             raise InvalidRequestError
@@ -48,7 +48,7 @@ class DB:
             raise NoResultFound
         return result
 
-    def update_user(self, user_id, **kwargs):
+    def update_user(self, user_id: int, **kwargs) -> None:
         '''updates a user'''
         user = self.find_user_by(id=user_id)
         for k, v in kwargs.items():
