@@ -13,7 +13,7 @@ from db import DB
 from user import User
 
 
-def _hash_password(password: str) -> bytes:
+def _hash_password(password: str) -> str:
     '''hashes password'''
     return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
@@ -31,7 +31,6 @@ class Auth:
         try:
             self._db.find_user_by(email=email)
         except NoResultFound:
-            hashed_pwd = _hash_password(password)
-            return self._db.add_user(email, hashed_pwd)
+            return self._db.add_user(email, _hash_password(password))
         else:
             raise ValueError('User {} already exists'.format(email))
