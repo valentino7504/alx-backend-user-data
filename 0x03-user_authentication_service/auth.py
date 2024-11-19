@@ -5,6 +5,7 @@ authentication module
 
 '''
 import uuid
+from typing import Union
 
 import bcrypt
 from sqlalchemy.exc import InvalidRequestError
@@ -59,3 +60,12 @@ class Auth:
             return None
         self._db.update_user(user.id, session_id=new_session)
         return new_session
+
+    def get_user_from_session_id(self, session_id: str) -> Union[User, None]:
+        '''gets user using the session id'''
+        try:
+            user = self._db.find_user_by()
+        except (NoResultFound, InvalidRequestError):
+            return None
+        else:
+            return user
