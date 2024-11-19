@@ -29,7 +29,7 @@ class Auth():
     def register_user(self, email: str, password: str) -> Union[None, User]:
         '''registers a user'''
         try:
-            user_check = self._db.find_user_by(email=email)
+            self._db.find_user_by(email=email)
         except NoResultFound:
             hashed_pwd = _hash_password(password)
             return self._db.add_user(email, hashed_pwd)
