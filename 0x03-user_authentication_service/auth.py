@@ -19,6 +19,11 @@ def _hash_password(password: str) -> bytes:
     return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
 
+def _generate_uuid() -> str:
+    '''returns string of uuid'''
+    return str(uuid.uuid4())
+
+
 class Auth:
     '''Auth class to interact with the authentication database.
     '''
@@ -45,13 +50,9 @@ class Auth:
             return False
         return bcrypt.checkpw(password.encode('utf-8'), user.hashed_password)
 
-    def _generate_uuid(self) -> str:
-        '''returns string of uuid'''
-        return str(uuid.uuid4())
-
     def create_session(self, email: str) -> str:
         '''creates a session'''
-        new_session = self._generate_uuid()
+        new_session = _generate_uuid()
         try:
             user = self._db.find_user_by(email=email)
         except (NoResultFound, InvalidRequestError):
