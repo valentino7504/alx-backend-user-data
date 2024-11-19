@@ -4,6 +4,8 @@
 authentication module
 
 '''
+from typing import Union
+
 import bcrypt
 from sqlalchemy.exc import NoResultFound
 
@@ -24,12 +26,12 @@ class Auth():
         '''dunder init'''
         self._db = DB()
 
-    def register_user(self, email: str, password: str) -> User:
+    def register_user(self, email: str, password: str) -> Union[None, User]:
         '''registers a user'''
         try:
             user_check = self._db.find_user_by(email=email)
-            raise ValueError(f'User {user_check.email} already exists.')
         except NoResultFound:
-            pass
-        hashed_pwd = _hash_password(password)
-        return self._db.add_user(email, hashed_pwd)
+            hashed_pwd = _hash_password(password)
+            return self._db.add_user(email, hashed_pwd)
+        else:
+            raise ValueError(f'User {user_check.email} already exists.')
