@@ -1,4 +1,5 @@
-*main.py
+*-main.py
+.db*
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
